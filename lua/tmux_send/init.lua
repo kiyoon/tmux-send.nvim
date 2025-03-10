@@ -49,6 +49,10 @@ M.send_to_pane = function(opts)
   end
 
   local target_program = tmux_utils.program_type_of_pane(target_pane)
+  if target_program == nil then
+    return
+  end
+
   local content = content_grabber.smart_grab()
 
   tmux_utils.paste_to_pane(content, target_pane, { add_newline = add_newline, target_program = target_program })
