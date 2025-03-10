@@ -188,11 +188,8 @@ M.paste_to_pane = function(content, pane_identifier, opts)
     vim.fn.system("tmux display -pt '" .. pane_identifier .. "' '#{session_name}:#{window_index}.#{pane_index}'")
   )
 
-  notify(
-    "Pasted to tmux: " .. pasted_pane_name .. " (" .. target_program .. ")",
-    vim.log.levels.INFO,
-    { title = "tmux-send.nvim" }
-  )
+  print("Pasted to tmux: " .. pasted_pane_name .. " (" .. target_program .. ")")
+  vim.cmd("redraw!")
 
   config.previous_pane = pane_identifier
   return pasted_pane_name
