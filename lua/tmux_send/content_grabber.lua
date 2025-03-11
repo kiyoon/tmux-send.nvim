@@ -55,6 +55,14 @@ M.smart_grab = function()
       path = nt_nodes.absolute_path -- root dir path
     end
     return { " '" .. path .. "'" }
+  elseif vim.bo.filetype == "neo-tree" then
+    local node = require("neo-tree.sources.manager").get_state("filesystem").tree:get_node()
+    if node.path ~= nil then
+      return { " '" .. node.path .. "'" }
+    end
+
+    -- if you are on a message like (2 hidden items), then return empty
+    return {}
   end
 
   local mode = vim.api.nvim_get_mode().mode

@@ -166,6 +166,21 @@ M.paste_to_pane = function(content, pane_identifier, opts)
     return nil
   end
 
+  if type(content) == "table" then
+    if vim.tbl_isempty(content) then
+      notify("Empty content", vim.log.levels.ERROR, { title = "tmux-send.nvim" })
+      return nil
+    end
+  elseif type(content) == "string" then
+    if content == "" then
+      notify("Empty content", vim.log.levels.ERROR, { title = "tmux-send.nvim" })
+      return nil
+    end
+  else
+    notify("Invalid content type", vim.log.levels.ERROR, { title = "tmux-send.nvim" })
+    return nil
+  end
+
   local content_processed
   if target_program == "ipython" then
     content_processed = M.add_buffer(content, "tmux-send-nvim-temp", { strip_empty_lines = true })

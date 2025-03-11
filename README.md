@@ -10,7 +10,7 @@ Or, you can just copy to the tmux buffer for later.
 
 ## Compatible Plugins
 
-- It will detect [Nvim-Tree](https://github.com/nvim-tree/nvim-tree) and copy-paste the file's absolute path.  
+- It will detect [Nvim-Tree](https://github.com/nvim-tree/nvim-tree) and [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim) and copy-paste the file's absolute path.  
 - It works great with [treemux](https://github.com/kiyoon/treemux) which shows Nvim-Tree within tmux! Make your terminal like an IDE.
 
 ## 🛠️ Installation
