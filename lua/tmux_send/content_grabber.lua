@@ -63,6 +63,15 @@ M.smart_grab = function()
 
     -- if you are on a message like (2 hidden items), then return empty
     return {}
+  elseif vim.bo.filetype == "oil" then
+    local oil = require("oil")
+    local entry = oil.get_cursor_entry()
+    if entry == nil then
+      return {}
+    end
+
+    local path = oil.get_current_dir() .. entry.name
+    return { " '" .. path .. "'" }
   end
 
   local mode = vim.api.nvim_get_mode().mode

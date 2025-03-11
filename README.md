@@ -10,7 +10,7 @@ Or, you can just copy to the tmux buffer for later.
 
 ## Compatible Plugins
 
-- It will detect [Nvim-Tree](https://github.com/nvim-tree/nvim-tree) and [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim) and copy-paste the file's absolute path.  
+- It will detect [Nvim-Tree](https://github.com/nvim-tree/nvim-tree), [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim), [oil.nvim](https://github.com/stevearc/oil.nvim) and copy-paste the file's absolute path.  
 - It works great with [treemux](https://github.com/kiyoon/treemux) which shows Nvim-Tree within tmux! Make your terminal like an IDE.
 
 ## 🛠️ Installation
@@ -84,7 +84,7 @@ With lazy.nvim,
 5. Omitting the number (e.g. running `-`) will use the previous pane again.
 
 
-## Recommended tmux.conf settings
+### Recommended tmux.conf settings
 ```tmux
 # Set the base index for windows to 1 instead of 0.
 set -g base-index 1
@@ -97,7 +97,7 @@ set -g pane-border-status top
 set -g pane-border-format ' .#P (#D) #{pane_current_command} '
 ```
 
-## Recommended Nvim-Tree settings
+### Recommended Nvim-Tree settings
 
 If using the example key bindings above, it is recommended to change Nvim-Tree's keybinding (remove '-' and use 'u' instead):
 
@@ -121,6 +121,19 @@ require("nvim-tree").setup({
 })
 ```
 
+### Recommended oil.nvim settings
+
+If using the example key bindings above, it is recommended to change oil.nvim's keybinding (remove '-' and use 'U' instead):
+
+```lua
+require("oil").setup({
+  keymaps = {
+    -- ["-"] = "actions.parent",
+    ["U"] = "actions.parent",
+  },
+})
+```
+
 ## Related project
 - [vim-slime](https://github.com/jpalardy/vim-slime)
   - Differences: vim-slime focuses on sending to REPL for development, whereas tmux-send.nvim is for more general purpose.
@@ -128,5 +141,5 @@ require("nvim-tree").setup({
   - tmux-send.nvim can detect the target pane's running program for a better experience (e.g. detects vim and paste in paste mode)
   - tmux-send.nvim does not rely on LSP so it's lighter. Just grab the exact part you need.
     - Tip: use [treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects) to easily select function/class/if/loop etc.  
-  - tmux-send.nvim can send [Nvim-Tree](https://github.com/nvim-tree/nvim-tree)'s files with absolute path to another pane.
+  - tmux-send.nvim can send [Nvim-Tree](https://github.com/nvim-tree/nvim-tree) (and others) files with absolute path to another pane.
 - [vim-screenpaste](https://github.com/kiyoon/vim-screenpaste) if you're using screen.
