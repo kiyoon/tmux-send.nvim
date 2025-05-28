@@ -8,6 +8,7 @@ local M = {}
 ---@field pane_identifier string? If specified, ignore the count and send to the specific pane.
 ---@field count_is_uid boolean? If true, the count is the unique pane identifier. e.g. 5- sends text to %5. If false, the count is the window and pane number. e.g. 5 sends text to .5, 15 sends to 1.5 (window 1, pane 5).
 ---@field add_newline boolean? If true, add a newline at the end of the content. Default is true.
+---@field content string|string[]? If nil, use visual selection or the current line.
 
 ---Send the content to the tmux pane.
 ---If the count is given, it sends to the specific pane.
@@ -53,7 +54,12 @@ M.send_to_pane = function(opts)
     return
   end
 
-  local content = content_grabber.smart_grab()
+  local content
+  if opts.content ~= nil then
+    content = opts.content
+  else
+    content = content_grabber.smart_grab()
+  end
 
   tmux_utils.paste_to_pane(content, target_pane, { add_newline = add_newline, target_program = target_program })
 end
