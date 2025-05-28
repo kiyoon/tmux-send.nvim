@@ -1,8 +1,17 @@
+local utils = require("tmux_send.utils")
+
 local M = {}
 
 ---Get the content of the visual/select mode selection.
 ---@return string[]
 local function get_visual_selection()
+  local c_v = vim.api.nvim_replace_termcodes("<C-v>", true, true, true)
+  local modes = { "v", "V", c_v }
+  local mode = vim.fn.mode():sub(1, 1)
+  if not vim.tbl_contains(modes, mode) then
+    return {}
+  end
+
   -- Get the start and end positions of the selection
   local _, ls, cs = unpack(vim.fn.getpos("v"))
   local _, le, ce = unpack(vim.fn.getpos("."))
@@ -18,23 +27,50 @@ local function get_visual_selection()
   if #lines == 0 then
     return {}
   end
+  ce = math.min(ce, #lines[#lines])
 
-  local mode = vim.api.nvim_get_mode().mode
-
-  if mode == "v" or mode == "vs" or mode == "s" then
-    -- Adjust the columns to get correct substring
-    lines[#lines] = string.sub(lines[#lines], 1, ce)
-    lines[1] = string.sub(lines[1], cs)
-  elseif vim.list_contains({ "CTRL-V", "\22", "CTRL-S" }, mode) then
-    -- Visual block mode
-    if ce < cs then
-      cs, ce = ce, cs
+  if mode == "v" or mode == "V" then
+    if vim.fn.has("nvim-0.10") == 1 then
+      ce = ce + vim.str_utf_end(lines[#lines], ce)
     end
+    if mode == "v" then
+      if #lines == 1 then
+        return { string.sub(lines[1], cs, ce) }
+      end
+      lines[1] = string.sub(lines[1], cs)
+      lines[#lines] = string.sub(lines[#lines], 1, ce)
+    end
+  else
+    --  TODO: visual block: fix weird behavior when selection include end of line
+    local csw = math.min(utils.str_widthindex(lines[1], cs)[1], utils.str_widthindex(lines[#lines], ce)[1])
+    local cew = math.max(utils.str_widthindex(lines[1], cs)[2], utils.str_widthindex(lines[#lines], ce)[2])
     for i, line in ipairs(lines) do
-      lines[i] = string.sub(line, cs, ce)
+      -- byte index for current line from width index
+      local csl = utils.str_wbyteindex(line, csw)[1]
+      local cel = utils.str_wbyteindex(line, cew)[2]
+      if vim.fn.has("nvim-0.10") == 1 then
+        csl = csl + vim.str_utf_start(line, csl)
+        cel = cel + vim.str_utf_end(line, cel)
+      end
+      lines[i] = string.sub(line, csl, cel)
     end
   end
 
+  -- local mode = vim.api.nvim_get_mode().mode
+  --
+  -- if mode == "v" or mode == "vs" or mode == "s" then
+  --   -- Adjust the columns to get correct substring
+  --   lines[#lines] = string.sub(lines[#lines], 1, ce)
+  --   lines[1] = string.sub(lines[1], cs)
+  -- elseif vim.list_contains({ "CTRL-V", "\22", "CTRL-S" }, mode) then
+  --   -- Visual block mode
+  --   if ce < cs then
+  --     cs, ce = ce, cs
+  --   end
+  --   for i, line in ipairs(lines) do
+  --     lines[i] = string.sub(line, cs, ce)
+  --   end
+  -- end
   -- V, S mode: no further processing needed
 
   return lines
